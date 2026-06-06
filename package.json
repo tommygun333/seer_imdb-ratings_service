@@ -1,0 +1,36 @@
+{
+  "name": "seer_imdb-ratings_service",
+  "version": "1.0.0",
+  "description": "Standalone IMDB ratings sidecar service for Seerr",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "tsx src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "test": "node --test --import tsx src/**/*.test.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tommygun333/seer_imdb-ratings_service.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/tommygun333/seer_imdb-ratings_service/issues"
+  },
+  "homepage": "https://github.com/tommygun333/seer_imdb-ratings_service#readme",
+  "dependencies": {
+    "express": "^5.2.1",
+    "node-cache": "^5.1.2"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/node": "^25.9.2",
+    "@types/supertest": "^7.2.0",
+    "supertest": "^7.2.2",
+    "tsx": "^4.22.4",
+    "typescript": "^6.0.3"
+  }
+}
