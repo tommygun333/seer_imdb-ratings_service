@@ -2,8 +2,8 @@
 
 This standalone TypeScript/Express microservice replaces Seerr's Radarr-only IMDB proxy flow and adds reliable IMDB ratings for both movies and TV by using two strategies with fallback:
 
-1. IMDB GraphQL API (primary)
-2. IMDB flat-file dataset cache (fallback)
+1. IMDB flat-file dataset cache (primary)
+2. IMDB GraphQL API (fallback)
 
 It exposes a small API Seerr can call directly:
 

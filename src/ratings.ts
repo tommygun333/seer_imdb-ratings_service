@@ -34,18 +34,18 @@ export class RatingsService {
       return cached;
     }
 
-    const graphql = await this.graphqlFetcher(imdbId);
-    if (graphql) {
-      this.logger.debug('Ratings strategy succeeded', { strategy: 'graphql', type, imdbId });
-      const rating = this.toImdbRating(imdbId, graphql);
-      this.responseCache.set(cacheKey, rating);
-      return rating;
-    }
-
     const flatFile = await this.flatFileStore.getRating(imdbId);
     if (flatFile) {
       this.logger.debug('Ratings strategy succeeded', { strategy: 'flatfile', type, imdbId });
       const rating = this.toImdbRating(imdbId, flatFile);
+      this.responseCache.set(cacheKey, rating);
+      return rating;
+    }
+
+    const graphql = await this.graphqlFetcher(imdbId);
+    if (graphql) {
+      this.logger.debug('Ratings strategy succeeded', { strategy: 'graphql', type, imdbId });
+      const rating = this.toImdbRating(imdbId, graphql);
       this.responseCache.set(cacheKey, rating);
       return rating;
     }

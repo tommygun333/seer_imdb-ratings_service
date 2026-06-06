@@ -5,7 +5,7 @@ import { createLogger } from './logger';
 import { createServer } from './server';
 import request from 'supertest';
 
-test('RatingsService falls back to flat file and caches by content type', async () => {
+test('RatingsService uses flat file first and caches by content type', async () => {
   let graphqlCalls = 0;
   let flatfileCalls = 0;
 
@@ -32,8 +32,35 @@ test('RatingsService falls back to flat file and caches by content type', async 
   assert.equal(movieSecond?.criticsScoreCount, 1200);
   assert.equal(tvFirst?.url, 'https://www.imdb.com/title/tt12345');
 
-  assert.equal(graphqlCalls, 2);
+  assert.equal(graphqlCalls, 0);
   assert.equal(flatfileCalls, 2);
+});
+
+test('RatingsService falls back to graphql when flat file misses', async () => {
+  let graphqlCalls = 0;
+  let flatfileCalls = 0;
+
+  const service = new RatingsService({
+    responseCacheTtlSeconds: 60,
+    logger: createLogger('error'),
+    graphqlFetcher: async () => {
+      graphqlCalls += 1;
+      return { rating: 7.2, votes: 800 };
+    },
+    flatFileStore: {
+      getRating: async () => {
+        flatfileCalls += 1;
+        return null;
+      },
+    },
+  });
+
+  const result = await service.getRating('movie', 'tt99999');
+
+  assert.equal(result?.criticsScore, 7.2);
+  assert.equal(result?.criticsScoreCount, 800);
+  assert.equal(flatfileCalls, 1);
+  assert.equal(graphqlCalls, 1);
 });
 
 test('Server returns 400 for invalid imdb id before calling service', async () => {
