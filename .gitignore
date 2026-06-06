@@ -1,0 +1,5 @@
+node_modules
+dist
+.env
+data/cache/title.ratings.tsv
+data/cache/title.ratings.tsv.tmp
