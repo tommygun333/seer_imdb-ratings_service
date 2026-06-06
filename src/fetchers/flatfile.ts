@@ -4,6 +4,7 @@ import { promises as fs } from 'fs';
 import path from 'path';
 import { pipeline } from 'stream/promises';
 import { Readable } from 'stream';
+import type { ReadableStream as WebReadableStream } from 'node:stream/web';
 import readline from 'readline';
 import { Logger } from '../logger';
 import { RatingData } from '../types';
@@ -131,7 +132,11 @@ export class FlatFileRatingsStore {
     const tempPath = `${this.cacheFilePath}.tmp`;
 
     try {
-      await pipeline(Readable.fromWeb(response.body as any), createGunzip(), createWriteStream(tempPath));
+      await pipeline(
+        Readable.fromWeb(response.body as WebReadableStream<Uint8Array>),
+        createGunzip(),
+        createWriteStream(tempPath)
+      );
 
       await fs.rename(tempPath, this.cacheFilePath);
       this.logger.info('IMDb ratings flat file downloaded', { path: this.cacheFilePath });
@@ -190,7 +195,7 @@ export class FlatFileRatingsStore {
 
     if (validRows <= MIN_EXPECTED_ROWS) {
       throw new Error(
-        `IMDb ratings file appears truncated: ${validRows} valid rows (minimum ${MIN_EXPECTED_ROWS + 1})`
+        `IMDb ratings file appears truncated: ${validRows} valid rows (expected more than ${MIN_EXPECTED_ROWS})`
       );
     }
 
